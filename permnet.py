@@ -94,5 +94,6 @@ class PermNet(PyroModule):
         x = self.perm_layer1(x)
         x = self.perm_layer2(x)
         x = self.perm_layer3(x)
+        x = torch.abs(x)
 
         return x
