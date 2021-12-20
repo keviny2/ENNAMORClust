@@ -10,16 +10,16 @@ class PermutationLayer(PyroModule):
     GitHub repo: https://github.com/fxia22/pointnet.pytorch/blob/f0c2430b0b1529e3f76fb5d6cd6ca14be763d975/pointnet/model.py#L11
     Paper: https://arxiv.org/pdf/1612.00593.pdf
     '''
-    def __init__(self, input_feat_size=784, hidden=2048, last=False, output_size=1):
+    def __init__(self, in_ch=784, hidden=2048, output_size=1, last=False):
         super().__init__()
         
-        self.input_feat_size = input_feat_size
+        self.in_ch = in_ch
         self.hidden = hidden
-        self.last = last
         self.output_size = output_size
+        self.last = last
         
         self.inner_network = nn.Sequential(
-            nn.Conv2d(2*self.input_feat_size, self.hidden, 1, bias=False),
+            nn.Conv2d(2*self.in_ch, self.hidden, 1, bias=False),
             nn.SELU(),
             nn.BatchNorm2d(self.hidden),
             
@@ -40,6 +40,10 @@ class PermutationLayer(PyroModule):
             
 
     def forward(self, x):
+        '''
+        Input: (B, N, M) tensor
+        '''
+        
         # do some reshaping to construct pairs
         num_objs = x.shape[2]
         x = x.unsqueeze(3)
@@ -49,6 +53,7 @@ class PermutationLayer(PyroModule):
         # shape: [1, 1568, 500, 500] => [BATCH_SIZE, 2*NUM_PIXELS, NUM_IMGS, NUM_IMGS]
         # the Z tensor contains the interactions between every possible pair of images in the dataset
         Z = torch.cat([z1,z2], axis=1)
+        
         # execute inner network
         Y = self.inner_network(Z)
         
@@ -66,21 +71,28 @@ class PermutationLayer(PyroModule):
 
     
 class PermNet(PyroModule):
-    def __init__(self, num_pixels=784, hidden=2048, output_size=None):
+    def __init__(self, in_ch, hidden, output_size):
         super().__init__() 
         
-        self.perm_layer1 = PermutationLayer(num_pixels, hidden)
+        self.perm_layer1 = PermutationLayer(in_ch, hidden)
         self.perm_layer2 = PermutationLayer(hidden, hidden)
-        self.perm_layer3 = PermutationLayer(hidden, hidden, last=True, output_size=output_size)
+        self.perm_layer3 = PermutationLayer(hidden, hidden, output_size=output_size, last=True)
         
     def forward(self, x):
+        '''
+        Input: (*, N, M) tensor
+        
+        Returns: (B, self.output_size)
+        '''
         
         if len(x.shape) == 2:
-            x = x.unsqueeze(0)
+            # add dimension in case incoming tensor is only 2D
+            x = x[None,:,:]
         
         x = x.permute(0,2,1)
         
         x = self.perm_layer1(x)
         x = self.perm_layer2(x)
         x = self.perm_layer3(x)
+
         return x
