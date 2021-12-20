@@ -8,7 +8,7 @@ class PointNet(PyroModule):
     GitHub repo: https://github.com/fxia22/pointnet.pytorch/blob/f0c2430b0b1529e3f76fb5d6cd6ca14be763d975/pointnet/model.py#L11
     Paper: https://arxiv.org/pdf/1612.00593.pdf
   '''
-  def __init__(self, in_ch, output_size, softmax=True):
+  def __init__(self, in_ch, hidden, output_size, softmax=True):
     super().__init__()
     
     self.output_size = output_size
