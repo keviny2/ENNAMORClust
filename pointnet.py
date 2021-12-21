@@ -18,18 +18,15 @@ class PointNet(PyroModule):
     self.t_net = nn.Sequential(
         nn.Conv1d(self.in_ch, 64, 1),
         nn.BatchNorm1d(64),
-        # nn.ReLU(),
-        nn.SELU(),
+        nn.ReLU(),
         
         nn.Conv1d(64, 128, 1),
         nn.BatchNorm1d(128),
-        # nn.ReLU(),
-        nn.SELU(),
+        nn.ReLU(),
         
         nn.Conv1d(128, 1024, 1),
         nn.BatchNorm1d(1024),
-        # nn.ReLU()
-        nn.SELU()
+        nn.ReLU()
     )
     
     self.fully_connected = nn.Sequential(
@@ -68,6 +65,7 @@ class PointNet(PyroModule):
         
     x = torch.max(x, 2, keepdim=True)[0]  # maxpooling layer
     x = x.view(-1, 1024)
+    
     x = self.fully_connected(x)
     
     if self.softmax:

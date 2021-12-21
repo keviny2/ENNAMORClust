@@ -11,7 +11,7 @@ class PermutationLayer(PyroModule):
     Paper: https://arxiv.org/pdf/1612.00593.pdf
     '''
     def __init__(self, in_ch=784, hidden=2048, output_size=1, last=False):
-        super().__init__()
+        super(PermutationLayer, self).__init__()
         
         self.in_ch = in_ch
         self.hidden = hidden
@@ -72,7 +72,7 @@ class PermutationLayer(PyroModule):
     
 class PermNet(PyroModule):
     def __init__(self, in_ch, hidden, output_size):
-        super().__init__() 
+        super(PermNet, self).__init__() 
         
         self.perm_layer1 = PermutationLayer(in_ch, hidden)
         self.perm_layer2 = PermutationLayer(hidden, hidden)
