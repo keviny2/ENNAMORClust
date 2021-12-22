@@ -1,5 +1,7 @@
 __pycache__
-saved_models/
+saved_models/convnet/*
+saved_models/permnet/*
+saved_models/pointnet/*
 .ipynb_checkpoints/
 .idea/
 .DS_Store
