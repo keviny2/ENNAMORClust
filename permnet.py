@@ -21,12 +21,22 @@ class PermutationLayer(PyroModule):
         
         if equamclust:
             self.inner_network = nn.Sequential(
-                nn.Conv2d(2*self.in_ch, self.hidden, 1, bias=False),
+                nn.Conv2d(2*self.in_ch, self.hidden, 5, bias=False),
                 nn.LeakyReLU(0.2),
                 nn.BatchNorm2d(self.hidden),
                 nn.Dropout(0.3),
 
-                nn.Conv2d(self.hidden, self.hidden, 1, bias=False),
+                nn.Conv2d(self.hidden, self.hidden, 5, bias=False),
+                nn.LeakyReLU(0.2),
+                nn.BatchNorm2d(self.hidden),
+                nn.Dropout(0.3),
+                
+                nn.Conv2d(self.hidden, self.hidden, 5, bias=False),
+                nn.LeakyReLU(0.2),
+                nn.BatchNorm2d(self.hidden),
+                nn.Dropout(0.3),
+                
+                nn.Conv2d(self.hidden, self.hidden, 5, bias=False),
                 nn.LeakyReLU(0.2),
                 nn.BatchNorm2d(self.hidden),
                 nn.Dropout(0.3)
