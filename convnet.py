@@ -56,7 +56,7 @@ class ConvNet(PyroModule):
     x = x.permute(0, 2, 1)
     
     x = self.conv_layers(x)
-    
+    x = x.reshape()
     x = nn.Linear(x.shape[-1], self.output_size)(x)
     x = torch.square(x)
     
