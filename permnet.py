@@ -10,31 +10,56 @@ class PermutationLayer(PyroModule):
     GitHub repo: https://github.com/fxia22/pointnet.pytorch/blob/f0c2430b0b1529e3f76fb5d6cd6ca14be763d975/pointnet/model.py#L11
     Paper: https://arxiv.org/pdf/1612.00593.pdf
     '''
-    def __init__(self, in_ch=784, hidden=2048, output_size=1, last=False):
+    def __init__(self, in_ch=784, hidden=2048, output_size=1, last=False, equamclust=False):
         super(PermutationLayer, self).__init__()
         
         self.in_ch = in_ch
         self.hidden = hidden
         self.output_size = output_size
         self.last = last
+        self.equamclust = equamclust
         
-        self.inner_network = nn.Sequential(
-            nn.Conv2d(2*self.in_ch, self.hidden, 1, bias=False),
-            nn.SELU(),
-            nn.BatchNorm2d(self.hidden),
+        if equamclust:
+            self.inner_network = nn.Sequential(
+                nn.Conv2d(2*self.in_ch, self.hidden, 5, bias=False),
+                nn.LeakyReLU(0.2),
+                nn.BatchNorm2d(self.hidden),
+                nn.Dropout(0.3),
+
+                nn.Conv2d(self.hidden, self.hidden, 5, bias=False),
+                nn.LeakyReLU(0.2),
+                nn.BatchNorm2d(self.hidden),
+                nn.Dropout(0.3),
+                
+                nn.Conv2d(self.hidden, self.hidden, 5, bias=False),
+                nn.LeakyReLU(0.2),
+                nn.BatchNorm2d(self.hidden),
+                nn.Dropout(0.3),
+                
+                nn.Conv2d(self.hidden, self.hidden, 5, bias=False),
+                nn.LeakyReLU(0.2),
+                nn.BatchNorm2d(self.hidden),
+                nn.Dropout(0.3)
+            )
             
-            nn.Conv2d(self.hidden, self.hidden, 1, bias=False),
-            nn.SELU(),
-            nn.BatchNorm2d(self.hidden),
-            
-            nn.Conv2d(self.hidden, self.hidden, 1, bias=False),
-            nn.SELU(),
-            nn.BatchNorm2d(self.hidden),            
-            
-            nn.Conv2d(self.hidden, self.hidden, 1, bias=False),
-            nn.SELU(),
-            nn.BatchNorm2d(self.hidden)
-        )
+        else:
+            self.inner_network = nn.Sequential(
+                nn.Conv2d(2*self.in_ch, self.hidden, 1, bias=False),
+                nn.SELU(),
+                nn.BatchNorm2d(self.hidden),
+
+                nn.Conv2d(self.hidden, self.hidden, 1, bias=False),
+                nn.SELU(),
+                nn.BatchNorm2d(self.hidden),
+
+                nn.Conv2d(self.hidden, self.hidden, 1, bias=False),
+                nn.SELU(),
+                nn.BatchNorm2d(self.hidden),            
+
+                nn.Conv2d(self.hidden, self.hidden, 1, bias=False),
+                nn.SELU(),
+                nn.BatchNorm2d(self.hidden)
+            )
         
         self.last_layer = nn.Conv2d(self.hidden, self.output_size, 1)
             

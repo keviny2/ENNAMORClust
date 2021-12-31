@@ -4,7 +4,7 @@ from pyro.nn import PyroModule
 
 class ConvNet(PyroModule):
   '''
-    Simple CNN
+    Simple CNN - NOT EQUIVARIANT
   '''
   def __init__(self, in_ch, hidden, output_size):
     super().__init__()
