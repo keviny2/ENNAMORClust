@@ -1,1 +1,2 @@
-# amortized-gmm
+# ENNAMORClust 
+An Equivariant Neural Network in Amortized Inference for Effective Clustering
